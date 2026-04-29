@@ -1,0 +1,226 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="box_robot">
+    <!-- box dimensions as xacro properties -->
+    <xacro:property name="box_length" value="0.6"/>
+    <xacro:property name="box_width" value="0.4"/>
+    <xacro:property name="box_height" value="0.24"/>
+    <xacro:property name="camera_length" value="0.04"/>
+    <xacro:property name="camera_width" value="0.1"/>
+    <xacro:property name="camera_height" value="0.06"/>
+    <xacro:property name="wheel_radius" value="0.12"/>
+    <xacro:property name="wheel_length" value="0.05"/>
+    <xacro:property name="castor_radius" value="0.06"/>
+    <link name="base_footprint_link" />
+
+
+    <!-- macro to create a box link -->
+    <xacro:macro name="box" params="name color length width height origin_x origin_y origin_z mass">
+        <link name="${name}">
+            <visual>
+                <geometry>
+                    <box size="${length} ${width} ${height}"/>
+                </geometry>
+                <material name="${color}"/>
+                <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy="0 0 0"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="${length} ${width} ${height}"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="${mass}"/>
+                <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy="0 0 0"/>
+                <inertia ixx="${(mass/12)*(height*height + width*width)}" 
+                 ixy="0.0" ixz="0.0" iyy="${(mass/12)*(length*length + height*height)}" iyz="0.0" 
+                 izz="${(mass/12)*(width*width  + length*length)}"/>
+            </inertial>
+        </link>
+    </xacro:macro>
+
+
+    <xacro:macro name="cylinder" params="name radius color length origin_x origin_y origin_z mass">
+        <link name="${name}">
+            <visual>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                </geometry>
+                <material name="${color}"/>
+                <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy="0 0 0"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="${mass}"/>
+                <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy="0 0 0"/>
+                <inertia ixx="${(mass/12)*(3*radius*radius + length*length)}" 
+                 ixy="0.0" ixz="0.0" iyy="${(mass/12)*(3*radius*radius + length*length)}" iyz="0.0" 
+                 izz="${(mass*radius*radius)/2}"/>
+            </inertial>
+        </link>
+    </xacro:macro>
+
+
+    <xacro:macro name="sphere" params="name radius color origin_x origin_y origin_z mass">
+        <link name="${name}">
+            <visual>
+                <geometry>
+                    <sphere radius="${radius}"/>
+                </geometry>
+                <material name="${color}"/>
+                <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy="0 0 0"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <sphere radius="${radius}"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="${mass}"/>
+                <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy="0 0 0"/>
+                <inertia ixx="${(2/5)*(mass)*(radius*radius)}" 
+                 ixy="0.0" ixz="0.0" iyy="${(2/5)*(mass)*(radius*radius)}" iyz="0.0" 
+                 izz="${(2/5)*(mass)*(radius*radius)}"/>
+            </inertial>
+        </link>
+    </xacro:macro>
+
+
+
+
+    <!-- MACRO TO CREATE JOINT -->
+     <xacro:macro name="fixed_joint" params="name parent child origin_x origin_y origin_z roll pitch yaw">
+        <joint name="${name}" type="fixed">
+            <parent link="${parent}"/>
+            <child link="${child}"/>
+            <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy="${roll} ${pitch} ${yaw}"/> 
+        </joint>
+    </xacro:macro>
+
+    <xacro:macro name="revolute_joint" params="name parent child origin_x origin_y origin_z roll pitch yaw axis_x axis_y axis_z 
+    upper_limit lower_limit">
+        <joint name="${name}" type="revolute">
+            <parent link="${parent}"/>
+            <child link="${child}"/>
+            <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy="${roll} ${pitch} ${yaw}"/> 
+            <axis xyz="${axis_x} ${axis_y} ${axis_z}"/> 
+            <limit lower="${lower_limit}" upper="${upper_limit}" effort="100" velocity="10"/>
+        </joint>
+    </xacro:macro>
+
+    <xacro:macro name="continuous_joint" params="name parent child origin_x origin_y origin_z roll pitch yaw axis_x axis_y axis_z">
+        <joint name="${name}" type="continuous">
+            <parent link="${parent}"/>
+            <child link="${child}"/>
+            <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy="${roll} ${pitch} ${yaw}"/> 
+            <axis xyz="${axis_x} ${axis_y} ${axis_z}"/> 
+        </joint>
+    </xacro:macro>    
+
+
+
+
+    <!-- instantiate the box link using the xacro properties -->
+    <xacro:box
+        name="base_link"
+        color="grey"
+        length="${box_length}"
+        width="${box_width}"
+        height="${box_height}"
+        origin_x="0" origin_y="0" origin_z="0"
+        mass="5.0"/>
+    
+    <xacro:fixed_joint
+        name="base_joint"
+        parent="base_footprint_link"
+        child="base_link"
+        origin_x="0" origin_y="0" origin_z="${box_height + 0.005}"
+        roll="0" pitch="0" yaw="0"/>
+
+
+
+    <xacro:box
+        name="camera_link"
+        color="white"
+        length="${camera_length}"
+        width="${camera_width}"
+        height="${camera_height}"
+        origin_x="0" origin_y="0" origin_z="0"
+        mass="0.5"/>
+
+    <xacro:fixed_joint
+        name="camera_joint"
+        parent="base_link"
+        child="camera_link"
+        origin_x="${(box_length / 2) + (camera_length / 2)}" origin_y="0" origin_z="0"
+        roll="0" pitch="0" yaw="0"/>
+
+
+
+    <xacro:cylinder
+        name="left_wheel_link"
+        color="green"
+        radius="${wheel_radius}"
+        length="${wheel_length}"
+        origin_x="0" origin_y="0" origin_z="0"
+        mass="1.5"/>
+
+    <xacro:continuous_joint
+        name="left_wheel_joint"
+        parent="base_link"
+        child="left_wheel_link"
+        origin_x="${-box_length / 3}" origin_y="${(box_width / 2) + (wheel_length / 2)}" origin_z="${-box_height / 2}"
+        roll="${pi/2}" pitch="0" yaw="0"
+        axis_x="0" axis_y="0" axis_z="-1"
+        />        
+
+
+
+    <xacro:cylinder
+        name="right_wheel_link"
+        color="green"
+        radius="${wheel_radius}"
+        length="${wheel_length}"
+        origin_x="0" origin_y="0" origin_z="0"
+        mass="1.5"/>      
+        
+    <xacro:continuous_joint
+        name="right_wheel_joint"
+        parent="base_link"
+        child="right_wheel_link"
+        origin_x="${-box_length / 3}" origin_y="${(-box_width / 2) - (wheel_length / 2)}" origin_z="${-box_height / 2}"
+        roll="${pi/2}" pitch="0" yaw="0"
+        axis_x="0" axis_y="0" axis_z="-1"
+        />    
+
+    
+    <xacro:sphere
+        name="castor_link"
+        color="red"
+        radius="${castor_radius}"
+        origin_x="0" origin_y="0" origin_z="0"
+        mass="1.0"
+    />       
+
+    <xacro:fixed_joint
+        name="castor_joint"
+        parent="base_link"
+        child="castor_link"
+        origin_x="${box_length / 3}" origin_y="0" origin_z="${(-castor_radius) + (-box_height / 2)}"
+        roll="0" pitch="0" yaw="0"
+    
+    />
+
+    <link name="camera_link_optical"></link>
+
+    <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_link_optical"/>
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+   
+</robot>
