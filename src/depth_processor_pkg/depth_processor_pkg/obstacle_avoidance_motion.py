@@ -15,14 +15,18 @@ class ObstacleAvoidanceMotion(Node):
         self.last_action = 'forward'  # 'forward', 'turning_left', 'turning_right'
         self.turn_start_time = None
         
-        # Thresholds
+        # Thresholds values for movements 
         self.SAFE_FORWARD_DIST = 1.0      # Minimum center distance to go forward
         self.SIDE_CLEARANCE_STRAIGHT = 0.5  # Side clearance needed when going straight
         self.SIDE_CLEARANCE_AFTER_TURN = 0.8  # MORE clearance needed after turning
         self.MIN_TURN_TIME = 1.0  # Minimum time to complete a turn (seconds)
+
+        # for corridor detection and dead end detection
         self.ROBOT_WIDTH = 0.4  
         self.SAFETY_MARGIN = 0.2
         self.MIN_PASSAGE_WIDTH = self.ROBOT_WIDTH + self.SAFETY_MARGIN
+
+        # for infinite stuck loop detection 
         self.stuck_counter = 0
         self.STUCK_THRESHOLD = 10  # Consecutive stuck detections
         self.last_distances = []
@@ -71,9 +75,7 @@ class ObstacleAvoidanceMotion(Node):
         width_balance = abs(left_avg - right_avg)
 
 
-        total_width = left_avg + right_avg
-        width_balance = abs(left_avg - right_avg)
-    
+       
         # ---  CONTEXT DETECTION ---
         # Corridor: Narrow enough to need centering, but wide enough to fit.
         is_corridor = (self.MIN_PASSAGE_WIDTH < total_width < 1.5) and (width_balance < 0.5)
