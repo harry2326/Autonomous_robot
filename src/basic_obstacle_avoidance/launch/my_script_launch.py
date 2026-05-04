@@ -14,7 +14,7 @@ def generate_launch_description():
     world_file_path = os.path.join(pkg_path, 'worlds', 'world2.sdf')
     
     # Path to RViz config
-    rviz_config_file = os.path.join(pkg_path, 'rviz', 'T2D2.rviz')
+    rviz_config_file = os.path.join(pkg_path, 'rviz', 'T2D2_.rviz')
     
     xacro_file = os.path.join(pkg_path, 'URDF', 'T2D2.xacro')
     robot_description_config = xacro.process_file(xacro_file)
