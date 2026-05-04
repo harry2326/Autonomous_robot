@@ -24,7 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [ 'depth_processor_node = depth_processor_pkg.depth_processor_node:main',
-                            'obstacle_avoidance_motion = depth_processor_pkg.obstacle_avoidance_motion:main'
+                            'obstacle_avoidance_motion = depth_processor_pkg.obstacle_avoidance_motion:main',
+                            'square.py = depth_processor_pkg.square:main',
         ],
     },
 )
