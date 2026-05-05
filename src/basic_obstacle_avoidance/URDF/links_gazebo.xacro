@@ -114,7 +114,7 @@
     <child_frame_id>base_footprint_link</child_frame_id>
     <tf_topic>/model/T2D2/tf</tf_topic>
     <publish_odom>true</publish_odom>
-    <publish_odom_tf>true</publish_odom_tf>
+    <!-- <publish_odom_tf>true</publish_odom_tf> -->
     <publish_wheel_tf>false</publish_wheel_tf>
     </plugin> 
   </gazebo>

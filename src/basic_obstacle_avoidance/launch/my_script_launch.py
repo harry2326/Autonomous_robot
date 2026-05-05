@@ -1,4 +1,5 @@
 import os
+from click import launch
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
@@ -13,6 +14,7 @@ def generate_launch_description():
     # Path to your custom world file
     world_file_path = os.path.join(pkg_path, 'worlds', 'world2.sdf')
     
+    ekf_file_path = os.path.join(pkg_path, 'config', 'ekf.yaml')
     # Path to RViz config
     rviz_config_file = os.path.join(pkg_path, 'rviz', 'T2D2_.rviz')
     
@@ -112,25 +114,34 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Updated Bridge for TF
+    # 12. Updated Bridge for TF
     bridge_tf = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
         arguments=[
-            '/model/T2D2/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
-            '/model/T2D2/tf_static@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
+            # '/model/T2D2/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
+            # '/model/T2D2/tf_static@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
             # Use the [ to ensure the bridge handles the Model -> JointState conversion correctly
             '/model/T2D2/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
             '/model/T2D2/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry',
         ],
         remappings=[
-            ('/model/T2D2/tf', '/tf'),
-            ('/model/T2D2/tf_static', '/tf_static'),
+            # ('/model/T2D2/tf', '/tf'),
+            # ('/model/T2D2/tf_static', '/tf_static'),
             ('/model/T2D2/joint_state', '/joint_states'),
             ('/model/T2D2/odometry', '/odom'), # Standardized naming
         ],
         output='screen'
+    )
+
+    # Robot localization node to fuse odometry and IMU data for better state estimation.
+    robot_localization_node = Node(
+    package='robot_localization',
+    executable='ekf_node',
+    name='ekf_filter_node',
+    output='screen',
+    parameters=[ekf_file_path, {'use_sim_time': True}]
     )
     
 
@@ -158,7 +169,6 @@ def generate_launch_description():
         gazebo,
         rsp,
         spawn,
-        rviz2,
         bridge_camera_image,
         bridge_depth_image,
         bridge_camera_info,
@@ -166,6 +176,8 @@ def generate_launch_description():
         bridge_cmd_vel,
         bridge_tf,
         bridge_imu,
+        robot_localization_node,
+        rviz2,
         # depth_process,
         # obstacle_avoidance_motion,
     ])
