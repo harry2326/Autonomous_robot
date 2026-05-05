@@ -101,26 +101,39 @@ def generate_launch_description():
         output='screen'
     )
 
+    # 11. Bridge IMU sensor from Gazebo to ROS
+    bridge_imu = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '/imu@sensor_msgs/msg/Imu@gz.msgs.IMU'
+        ],
+        parameters=[{'lazy': True}],
+        output='screen'
+    )
+
     # Updated Bridge for TF
     bridge_tf = Node(
-    package='ros_gz_bridge',
-    executable='parameter_bridge',
-    arguments=[
-        '/model/T2D2/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
-        '/model/T2D2/tf_static@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
-        '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-        # Use the [ to ensure the bridge handles the Model -> JointState conversion correctly
-        '/model/T2D2/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
-        '/model/T2D2/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry',
-    ],
-    remappings=[
-        ('/model/T2D2/tf', '/tf'),
-        ('/model/T2D2/tf_static', '/tf_static'),
-        ('/model/T2D2/joint_state', '/joint_states'),
-        ('/model/T2D2/odometry', '/odom'), # Standardized naming
-    ],
-    output='screen'
-)
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '/model/T2D2/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
+            '/model/T2D2/tf_static@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            # Use the [ to ensure the bridge handles the Model -> JointState conversion correctly
+            '/model/T2D2/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
+            '/model/T2D2/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry',
+        ],
+        remappings=[
+            ('/model/T2D2/tf', '/tf'),
+            ('/model/T2D2/tf_static', '/tf_static'),
+            ('/model/T2D2/joint_state', '/joint_states'),
+            ('/model/T2D2/odometry', '/odom'), # Standardized naming
+        ],
+        output='screen'
+    )
+    
+
     
     #launching depth processing
     # depth_process = Node(
@@ -152,6 +165,7 @@ def generate_launch_description():
         bridge_points,
         bridge_cmd_vel,
         bridge_tf,
+        bridge_imu,
         # depth_process,
         # obstacle_avoidance_motion,
     ])
