@@ -113,6 +113,11 @@ def generate_launch_description():
         parameters=[{'lazy': True}],
         output='screen'
     )
+    rtabmap_vo_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(pkg_path, 'launch', 'rtabmap_vo_sync.launch.py')
+        ])
+    )
 
     # 12. Updated Bridge for TF
     bridge_tf = Node(
@@ -176,6 +181,7 @@ def generate_launch_description():
         bridge_cmd_vel,
         bridge_tf,
         bridge_imu,
+        rtabmap_vo_launch,
         robot_localization_node,
         rviz2,
         # depth_process,

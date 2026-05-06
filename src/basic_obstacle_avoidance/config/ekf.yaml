@@ -39,6 +39,16 @@ ekf_filter_node:
                       false, false, true,
                       false, false, false]
 
+        odom1: /vo/odometry
+        odom1_config: [true,  true,  false,   # x, y (use position from VO)
+                        false, false, true,    # yaw (use orientation from VO)
+                        false, false, false,   # velocities (don't use from VO)
+                        false, false, false,
+                        false, false, false]
+        odom1_differential: false
+        odom1_relative: false
+        odom1_queue_size: 10
+
         imu0: imu
         imu0_config: [false, false, false,
                       false, false, false,

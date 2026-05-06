@@ -77,7 +77,7 @@ class ForwardMotionNode(Node):
             twist.angular.z = 0.0
         elif self.right:
             twist.linear.x = 0.0
-            twist.angular.z = -0.5  # Right turn
+            twist.angular.z = -0.2  # Right turn
         else:
             twist.linear.x = 0.2
             twist.angular.z = 0.0
