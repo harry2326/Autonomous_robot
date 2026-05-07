@@ -25,46 +25,46 @@ def generate_launch_description():
     )
     
     # 2. RTAB-Map Visual Odometry Node
-    rtabmap_vo = Node(
-        package='rtabmap_odom',
-        executable='rgbd_odometry',
-        output='screen',
-        arguments=['--ros-args', '--log-level', 'warn'],
-        parameters=[{
-            'frame_id': 'base_footprint_link',
-            'odom_frame_id': 'odom',
-            'publish_tf': False,
-            # 'Odom/AlignWithGround': 'true',       # Forces VO to stay at Z=0
-            # 'guess_frame_id': 'odom',             # Uses your EKF/Wheel odom to "guess" height
-            # 'Odom/ResetCountdown': '1',
+    # rtabmap_vo = Node(
+    #     package='rtabmap_odom',
+    #     executable='rgbd_odometry',
+    #     output='screen',
+    #     arguments=['--ros-args', '--log-level', 'warn'],
+    #     parameters=[{
+    #         'frame_id': 'base_footprint_link',
+    #         'odom_frame_id': 'odom',
+    #         'publish_tf': False,
+    #         # 'Odom/AlignWithGround': 'true',       # Forces VO to stay at Z=0
+    #         # 'guess_frame_id': 'odom',             # Uses your EKF/Wheel odom to "guess" height
+    #         # 'Odom/ResetCountdown': '1',
             
-            # Subscribe to pre-synchronized rgbd_image
+    #         # Subscribe to pre-synchronized rgbd_image
             
         
-        # THE FIX: Wait for TF to find the height offset
-            'wait_for_transform': 0.5,
-            'subscribe_rgbd': True,
-            'rgbd_cameras': 1,
-            'queue_size': 10,
+    #     # THE FIX: Wait for TF to find the height offset
+    #         'wait_for_transform': 0.5,
+    #         'subscribe_rgbd': True,
+    #         'rgbd_cameras': 1,
+    #         'queue_size': 10,
             
-            # Visual odometry parameters
-            'Odom/Strategy': '0',
-            'Odom/ResetCountdown': '1',
-            'Vis/MinInliers': '8',
-            'Vis/InlierDistance': '0.1',
-            'OdomF2M/MaxSize': '1000',
-            'Vis/FeatureType': '8',
-            'Vis/MaxFeatures': '500',
+    #         # Visual odometry parameters
+    #         'Odom/Strategy': '0',
+    #         'Odom/ResetCountdown': '1',
+    #         'Vis/MinInliers': '8',
+    #         'Vis/InlierDistance': '0.1',
+    #         'OdomF2M/MaxSize': '1000',
+    #         'Vis/FeatureType': '8',
+    #         'Vis/MaxFeatures': '500',
             
-            'use_sim_time': True
-        }],
-        remappings=[
-            ('rgbd_image0', '/rgbd_image'),
-            ('odom', '/vo/odometry')
-        ]
-    )
+    #         'use_sim_time': True
+    #     }],
+    #     remappings=[
+    #         ('rgbd_image0', '/rgbd_image'),
+    #         ('odom', '/vo/odometry')
+    #     ]
+    # )
     
     return LaunchDescription([
         rgbd_sync,
-        rtabmap_vo
+        # rtabmap_vo
     ])

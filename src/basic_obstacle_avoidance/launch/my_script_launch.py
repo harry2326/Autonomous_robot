@@ -148,6 +148,12 @@ def generate_launch_description():
     output='screen',
     parameters=[ekf_file_path, {'use_sim_time': True}]
     )
+
+    rtabmap_slam1 = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(pkg_path, 'launch', 'rtabmap_slam1.launch.py')
+        ])
+    )
     
 
     
@@ -183,6 +189,7 @@ def generate_launch_description():
         bridge_imu,
         rtabmap_vo_launch,
         robot_localization_node,
+        rtabmap_slam1,
         rviz2,
         # depth_process,
         # obstacle_avoidance_motion,
