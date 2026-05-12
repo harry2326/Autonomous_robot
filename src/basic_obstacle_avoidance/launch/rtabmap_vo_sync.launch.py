@@ -25,38 +25,36 @@ def generate_launch_description():
     )
     
     # 2. RTAB-Map Visual Odometry Node
+   # ... (rgbd_sync remains the same)
+
+    # 2. RTAB-Map Visual Odometry Node
     # rtabmap_vo = Node(
     #     package='rtabmap_odom',
     #     executable='rgbd_odometry',
     #     output='screen',
-    #     arguments=['--ros-args', '--log-level', 'warn'],
     #     parameters=[{
     #         'frame_id': 'base_footprint_link',
     #         'odom_frame_id': 'odom',
-    #         'publish_tf': False,
-    #         # 'Odom/AlignWithGround': 'true',       # Forces VO to stay at Z=0
-    #         # 'guess_frame_id': 'odom',             # Uses your EKF/Wheel odom to "guess" height
-    #         # 'Odom/ResetCountdown': '1',
-            
-    #         # Subscribe to pre-synchronized rgbd_image
-            
-        
-    #     # THE FIX: Wait for TF to find the height offset
+    #         'publish_tf': False, # Keep False because EKF will publish TF
     #         'wait_for_transform': 0.5,
     #         'subscribe_rgbd': True,
-    #         'rgbd_cameras': 1,
-    #         'queue_size': 10,
+    #         'use_sim_time': True,
             
-    #         # Visual odometry parameters
-    #         'Odom/Strategy': '0',
-    #         'Odom/ResetCountdown': '1',
-    #         'Vis/MinInliers': '8',
-    #         'Vis/InlierDistance': '0.1',
-    #         'OdomF2M/MaxSize': '1000',
-    #         'Vis/FeatureType': '8',
-    #         'Vis/MaxFeatures': '500',
+    #         # --- CORRIDOR STABILIZATION PARAMETERS ---
+    #         'Odom/Strategy': '0',         # Frame-to-Map (more stable in repetitive environments)
+    #         'Vis/MinInliers': '15',       # Increase from 8 (requires more matching points)
+    #         'Vis/InlierDistance': '0.05',  # Tighter matching (lower = stricter)
+    #         'Odom/FilteringStrategy': '1', # Particle Filter or Kalman filter for VO output
+    #         'Odom/MaxInliers': '20',      # Max features used for odometry
             
-    #         'use_sim_time': True
+    #         # REJECT JUMPS: If the VO suggests a move > 0.5m or 0.5rad between frames, ignore it
+    #         'Odom/MaxEstimationDelay': '0.5',
+    #         'Odom/GuessMotion': 'true',    # Use previous motion to predict next position
+    #         'RGBD/OptimizeMaxError': '0.3', # If error is high (ambiguous aisles), reject it
+            
+    #         # Feature extraction
+    #         'Vis/FeatureType': '8',       # GFTT/ORB (8 is usually GFTT)
+    #         'Vis/MaxFeatures': '1000',     # Increase features to find unique details in shelves
     #     }],
     #     remappings=[
     #         ('rgbd_image0', '/rgbd_image'),

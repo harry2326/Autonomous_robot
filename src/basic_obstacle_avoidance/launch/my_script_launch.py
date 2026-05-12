@@ -113,6 +113,8 @@ def generate_launch_description():
         parameters=[{'lazy': True}],
         output='screen'
     )
+
+
     rtabmap_vo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(pkg_path, 'launch', 'rtabmap_vo_sync.launch.py')

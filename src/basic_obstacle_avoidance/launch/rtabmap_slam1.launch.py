@@ -48,8 +48,8 @@ def generate_launch_description():
             
             # --- 4. ANTI-DISTORTION (Repetitive Rack Fix) ---
             'RGBD/ProximityBySpace': 'false', # Don't try to close loops just by proximity
-            'RGBD/OptimizeMaxError': '1.0',    # Reject loop closures that shift map >1m
-            'Vis/MinInliers': '15',           # Require high quality matches only
+            'RGBD/OptimizeMaxError': '0.5',    # Reject loop closures that shift map >1m
+            'Vis/MinInliers': '20',           # Require high quality matches only
             'RGBD/NeighborLinkRefining': 'true',
             
             # --- 5. MOTION UPDATE THRESHOLDS ---
@@ -58,7 +58,7 @@ def generate_launch_description():
             'RGBD/LinearUpdate': '0.1',   # 10cm
             
             # --- 6. OPTIMIZATION ---
-            'Optimizer/Strategy': '1',  # g2o
+            'Optimizer/Strategy': '2',  # g2o
             'Optimizer/Iterations': '20', # Reduced for faster real-time performance
             
             'use_sim_time': use_sim_time

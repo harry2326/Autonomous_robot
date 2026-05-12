@@ -15,7 +15,7 @@ def generate_launch_description():
         description='Use simulation time'
     )
     
-    # Database path (where map is saved)
+    # Database path
     database_path = os.path.expanduser('~/.ros/rtabmap.db')
     
     # RTAB-Map SLAM Node
@@ -24,64 +24,50 @@ def generate_launch_description():
         executable='rtabmap',
         output='screen',
         parameters=[{
-            # Database
             'database_path': database_path,
-            'Db/SqliteCache': 'true',  # Use cache for better performance
-            
-            # Frames
             'frame_id': 'base_footprint_link',
             'odom_frame_id': 'odom',
             'map_frame_id': 'map',
-            'publish_tf': True,  # Publish map→odom transform
+            'publish_tf': True,
+            'subscribe_rgbd': True,
+            'use_sim_time': use_sim_time,
+            'queue_size': 30,
+
+            # --- THE "AISLE SYMMETRY" FIXES ---
             
-            # Subscription
-            'subscribe_depth': False,
-            'subscribe_rgbd': True,  # Use synchronized RGBD
-            'subscribe_scan': False,  # Set true if you have laser
-            'rgbd_cameras': 1,
+            # 1. Optimizer Settings (GTSAM is better for warehouse constraints)
+            'Optimizer/Strategy': '2',          # 2 = GTSAM
+            'Optimizer/Robust': 'true',         # Use robust kernel
+            'Optimizer/RobustKernelDelta': '0.1', # Small delta = more skeptical of bad links
+            'Optimizer/VarianceIgnored': 'false', # Use sensor covariances from EKF
+            'RGBD/OptimizeMaxError': '0.5',     # Reject loop closures that jump > 50cm
+
+            # 2. Visual Loop Closure Filtering
+            'Vis/MinInliers': '20',             # Require many matches to accept a loop closure
+            'RGBD/LoopClosureRecheck': 'true',  # Double check visual links
+            'RGBD/ProximityBySpace': 'true',    # Only check for loops near current position
+            'RGBD/ProximityPathMaxNeighbors': '10',
             
-            # Queue and sync
-            'queue_size':30,
-            'qos': 1,
-            'approx_sync': True,
+            # 3. Motion Updates (Don't update the map if moving too slow)
+            'RGBD/AngularUpdate': '0.1',        # Update if rotates > 0.1 rad
+            'RGBD/LinearUpdate': '0.1',         # Update if moves > 10cm
             
-            # SLAM parameters
-            'RGBD/NeighborLinkRefining': 'true',
-            'RGBD/ProximityBySpace': 'true',
-            'RGBD/AngularUpdate': '0.01',  # Update if robot rotates >0.01 rad
-            'RGBD/LinearUpdate': '0.01',   # Update if robot moves >1cm
-            'RGBD/OptimizeFromGraphEnd': 'false',
+            # Memory Management
+            'Mem/IncrementalMemory': 'true',    # Set to false for Localization-only mode
+            'Mem/RehearsalSimilarity': '0.45',  # Higher = less likely to merge similar aisles
             
-            # Memory management
-            'Mem/RehearsalSimilarity': '0.30',
-            'Mem/STMSize': '30',
-            'Mem/IncrementalMemory': 'true',
-            'Mem/saveDepth16Format': 'true',
-            
-            # Loop closure
-            'Mem/UseOdomGravity': 'false',
-            'Rtabmap/DetectionRate': '1.0',  # Check for loop closure every 1 Hz
-            
-            # Visualization
-            'RGBD/CreateOccupancyGrid': 'true',  # Create 2D grid for Nav2
+            # Occupancy Grid for Nav2
             'Grid/FromDepth': 'true',
-            'Grid/CellSize': '0.05',  # 5cm resolution
-            'Grid/RangeMax': '5.0',   # Max depth for grid
-            'Grid/ClusterRadius': '0.1',
-            
-            # Optimization
-            'Optimizer/Strategy': '1',  # 0=TORO, 1=g2o, 2=GTSAM
-            'Optimizer/Iterations': '100',
-            
-            # Use simulation time
-            'use_sim_time': use_sim_time
+            'Grid/RangeMax': '5.0',
+            'Grid/CellSize': '0.05',
+            'Reg/Strategy': '0',                # 0=Vis, 1=Icp, 2=VisIcp
         }],
         remappings=[
             ('rgbd_image', '/rgbd_image'),
-            ('odom', '/odometry/filtered'),  # Use fused odometry from EKF
-            ('grid_map', '/map')  # Publish 2D occupancy grid
+            ('odom', '/odometry/filtered'),     # Subscribing to your EKF output
+            ('grid_map', '/map')
         ],
-        arguments=['--delete_db_on_start']  # Delete old map on startup (optional)
+        arguments=['--delete_db_on_start'] 
     )
     
     return LaunchDescription([
