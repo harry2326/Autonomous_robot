@@ -26,13 +26,13 @@ ekf_filter_node:
         #               false, false, false]
         # odom1_differential: false
         # odom1_relative: true
-        # odom1: /vo/odometry
-        # odom1_config: [true, true, false,   # Position (reduce from high weight)
-        #                false, false, true,   # Orientation
-        #                 false, false, false,
-        #                 false, false, false,
-        #                 false, false, false]
-        # odom1_differential: true
+        odom1: /icp/odometry
+        odom1_config: [true, true, false,   # Position (reduce from high weight)
+                       false, false, true,   # Orientation
+                        false, false, false,
+                        false, false, false,
+                        false, false, false]
+        odom1_differential: true
 
         # IMU (imu0)
         # We trust the IMU for pure rotation speed (Yaw)

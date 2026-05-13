@@ -115,11 +115,11 @@ def generate_launch_description():
     )
 
 
-    rtabmap_vo_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(pkg_path, 'launch', 'rtabmap_vo_sync.launch.py')
-        ])
-    )
+    # rtabmap_vo_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([
+    #         os.path.join(pkg_path, 'launch', 'rtabmap_vo_sync.launch.py')
+    #     ])
+    # )
 
     # 12. Updated Bridge for TF
     bridge_tf = Node(
@@ -151,9 +151,15 @@ def generate_launch_description():
     parameters=[ekf_file_path, {'use_sim_time': True}]
     )
 
-    rtabmap_slam1 = IncludeLaunchDescription(
+    # rtabmap_slam1 = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([
+    #         os.path.join(pkg_path, 'launch', 'rtabmap_slam1.launch.py')
+    #     ])
+    # )
+
+    rtabmap_ICP = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
-            os.path.join(pkg_path, 'launch', 'rtabmap_slam1.launch.py')
+            os.path.join(pkg_path, 'launch', 'rtabmap_ICP.launch.py')
         ])
     )
     
@@ -189,10 +195,13 @@ def generate_launch_description():
         bridge_cmd_vel,
         bridge_tf,
         bridge_imu,
-        rtabmap_vo_launch,
+        # rtabmap_ICP,
+        # rtabmap_vo_launch,
         robot_localization_node,
-        rtabmap_slam1,
+        rtabmap_ICP,
+        # rtabmap_slam1,
         rviz2,
         # depth_process,
         # obstacle_avoidance_motion,
+        
     ])

@@ -28,41 +28,41 @@ def generate_launch_description():
    # ... (rgbd_sync remains the same)
 
     # 2. RTAB-Map Visual Odometry Node
-    # rtabmap_vo = Node(
-    #     package='rtabmap_odom',
-    #     executable='rgbd_odometry',
-    #     output='screen',
-    #     parameters=[{
-    #         'frame_id': 'base_footprint_link',
-    #         'odom_frame_id': 'odom',
-    #         'publish_tf': False, # Keep False because EKF will publish TF
-    #         'wait_for_transform': 0.5,
-    #         'subscribe_rgbd': True,
-    #         'use_sim_time': True,
+    rtabmap_vo = Node(
+        package='rtabmap_odom',
+        executable='rgbd_odometry',
+        output='screen',
+        parameters=[{
+            'frame_id': 'base_footprint_link',
+            'odom_frame_id': 'odom',
+            'publish_tf': False, # Keep False because EKF will publish TF
+            'wait_for_transform': 0.5,
+            'subscribe_rgbd': True,
+            'use_sim_time': True,
             
-    #         # --- CORRIDOR STABILIZATION PARAMETERS ---
-    #         'Odom/Strategy': '0',         # Frame-to-Map (more stable in repetitive environments)
-    #         'Vis/MinInliers': '15',       # Increase from 8 (requires more matching points)
-    #         'Vis/InlierDistance': '0.05',  # Tighter matching (lower = stricter)
-    #         'Odom/FilteringStrategy': '1', # Particle Filter or Kalman filter for VO output
-    #         'Odom/MaxInliers': '20',      # Max features used for odometry
+            # --- CORRIDOR STABILIZATION PARAMETERS ---
+            'Odom/Strategy': '0',         # Frame-to-Map (more stable in repetitive environments)
+            'Vis/MinInliers': '15',       # Increase from 8 (requires more matching points)
+            'Vis/InlierDistance': '0.05',  # Tighter matching (lower = stricter)
+            'Odom/FilteringStrategy': '1', # Particle Filter or Kalman filter for VO output
+            'Odom/MaxInliers': '20',      # Max features used for odometry
             
-    #         # REJECT JUMPS: If the VO suggests a move > 0.5m or 0.5rad between frames, ignore it
-    #         'Odom/MaxEstimationDelay': '0.5',
-    #         'Odom/GuessMotion': 'true',    # Use previous motion to predict next position
-    #         'RGBD/OptimizeMaxError': '0.3', # If error is high (ambiguous aisles), reject it
+            # REJECT JUMPS: If the VO suggests a move > 0.5m or 0.5rad between frames, ignore it
+            'Odom/MaxEstimationDelay': '0.5',
+            'Odom/GuessMotion': 'true',    # Use previous motion to predict next position
+            'RGBD/OptimizeMaxError': '0.3', # If error is high (ambiguous aisles), reject it
             
-    #         # Feature extraction
-    #         'Vis/FeatureType': '8',       # GFTT/ORB (8 is usually GFTT)
-    #         'Vis/MaxFeatures': '1000',     # Increase features to find unique details in shelves
-    #     }],
-    #     remappings=[
-    #         ('rgbd_image0', '/rgbd_image'),
-    #         ('odom', '/vo/odometry')
-    #     ]
-    # )
+            # Feature extraction
+            'Vis/FeatureType': '8',       # GFTT/ORB (8 is usually GFTT)
+            'Vis/MaxFeatures': '1000',     # Increase features to find unique details in shelves
+        }],
+        remappings=[
+            ('rgbd_image0', '/rgbd_image'),
+            ('odom', '/vo/odometry')
+        ]
+    )
     
     return LaunchDescription([
         rgbd_sync,
-        # rtabmap_vo
+        rtabmap_vo
     ])
