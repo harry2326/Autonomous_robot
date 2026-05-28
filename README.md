@@ -3,7 +3,7 @@
 A ROS2-based autonomous mobile robot navigation system featuring depth-based obstacle avoidance, SLAM localization, and intelligent path planning algorithms.
 
 ## 📋 Video
-<img width="1920" height="1080" alt="Screen Recording 2026-05-07 165536" src="https://github.com/user-attachments/assets/3ee40884-4708-4295-8874-183579dbcf12" />
+<img width="400" height="225" alt="Screen Recording 2026-05-07 165536" src="https://github.com/user-attachments/assets/3ee40884-4708-4295-8874-183579dbcf12" />
 <img width="400" height="225" alt="Screen Recording 2026-05-07 161433" src="https://github.com/user-attachments/assets/91744cda-5391-4f0b-b204-48529bdf2d13" />
 <img width="1920" height="1080" alt="Screenshot (56)" src="https://github.com/user-attachments/assets/20f77ace-bea8-4326-b752-132e0a86a8b3" />
 
